@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Prompting Masterbook - by maelandri - arxvranity</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#022c22',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .nav-item.active {
+            color: #047857;
+            font-weight: 700;
+        }
+        .nav-item.active i {
+            transform: translateY(-2px);
+            color: #047857;
+        }
+        .category-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .category-content.active {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen pb-24 md:pb-8 flex flex-col items-center">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-y-[-150%] transition-transform duration-300 ease-in-out bg-brand-800 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border border-brand-500">
+        <i class="fa-solid fa-circle-check text-brand-500 text-xl"></i>
+        <span id="toast-message" class="text-sm font-medium">Prompt berhasil disalin!</span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="w-full max-w-3xl min-h-screen bg-white shadow-xl flex flex-col border-x border-slate-200">
+        
+        <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-700 flex items-center justify-center text-white shadow-md shadow-brand-700/20">
+                    <i class="fa-solid fa-robot text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">ChatGPT Cook Book</h1>
+                    <p class="text-xs font-semibold text-brand-600 tracking-wide uppercase">Panduan Prompting Expert</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="scrollToTop()" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-arrow-up text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="px-6 pt-4 pb-2">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" onkeyup="searchContent()" placeholder="Cari modul, teknik, atau rumus prompt..." class="w-full pl-10 pr-4 py-2.5 bg-slate-100/80 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-brand-600 focus:bg-white transition">
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 px-6 py-4 overflow-y-auto">
+
+            <section id="cat-cheat-sheet" class="category-content active space-y-6">
+                <!-- Category Banner -->
+                <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-10">
+                        <i class="fa-solid fa-table-cells-large text-9xl"></i>
+                    </div>
+                    <span class="inline-block px-3 py-1 bg-brand-500/20 text-brand-100 border border-brand-500/30 rounded-full text-xs font-medium mb-3">Modul 01</span>
+                    <h2 class="text-2xl font-extrabold text-white mb-2">Prompting Cheat Sheet</h2>
+                    <p class="text-brand-100 text-sm leading-relaxed">Panduan kilat menyusun prompt efektif dengan matriks Peran (Role), Tugas (Task), dan Format hasil.</p>
+                </div>
+
+                <!-- Graphic Illustration Component -->
+                <div class="bg-brand-50/50 border border-brand-100 rounded-2xl p-5 flex flex-col md:flex-row items-center gap-4">
+                    <div class="w-full md:w-1/3 flex justify-center">
+                        <!-- SVG Illustration for Cheat Sheet -->
+                        <svg class="w-32 h-32" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="20" y="30" width="160" height="140" rx="16" fill="#047857" opacity="0.1"/>
+                            <rect x="35" y="45" width="130" height="110" rx="12" fill="#FFFFFF" stroke="#047857" stroke-width="4"/>
+                            <rect x="50" y="60" width="40" height="20" rx="6" fill="#10B981"/>
+                            <rect x="100" y="60" width="50" height="8" rx="4" fill="#CBD5E1"/>
+                            <rect x="100" y="72" width="35" height="8" rx="4" fill="#E2E8F0"/>
+                            <rect x="50" y="90" width="40" height="20" rx="6" fill="#047857"/>
+                            <rect x="100" y="90" width="50" height="8" rx="4" fill="#CBD5E1"/>
+                            <rect x="100" y="102" width="35" height="8" rx="4" fill="#E2E8F0"/>
+                            <rect x="50" y="120" width="40" height="20" rx="6" fill="#022C22"/>
+                            <rect x="100" y="120" width="50" height="8" rx="4" fill="#CBD5E1"/>
+                            <rect x="100" y="132" width="35" height="8" rx="4" fill="#E2E8F0"/>
+                        </svg>
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <h3 class="text-base font-bold text-brand-900 mb-1">Rumus Dasar Cheat Sheet</h3>
+                        <p class="text-xs text-slate-600 mb-3">Gabungkan satu elemen dari setiap kolom untuk membuat instruksi presisi tinggi.</p>
+                        <div class="bg-white p-3 rounded-xl border border-brand-200 text-xs font-mono text-brand-800 shadow-sm">
+                            "Bertindaklah sebagai <span class="text-brand-600 font-bold">[PERAN]</span>, lakukan <span class="text-brand-600 font-bold">[TUGAS]</span> dalam <span class="text-brand-600 font-bold">[FORMAT]</span>"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matrix Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Column 1: ROLE -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-brand-500 transition">
+                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-3">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">1</div>
+                            <h4 class="font-bold text-slate-900 text-sm">Peran (ROLE)</h4>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-600">
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>CEO / Dirut</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Pemasar (Marketer)</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Penemu (Inventor)</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Terapis Psikologi</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Jurnalis Senior</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Penulis Teks Iklan</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Ghostwriter</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Akuntan / Konsultan</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Prompt Engineer</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Desainer Situs Web</li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2: TASK -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-brand-500 transition">
+                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-3">
+                            <div class="w-7 h-7 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs">2</div>
+                            <h4 class="font-bold text-slate-900 text-sm">Tugas (TASK)</h4>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-600">
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Esai / Opini</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Resep / Panduan</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Artikel Kredibel</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Teks Iklan (Ad Copy)</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Analisis Mendalam</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Posting Artikel Blog</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Naskah Penjualan</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Naskah Video / Reels</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Riset Kata Kunci SEO</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Urutan Email Pemasaran</li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3: FORMAT -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-brand-500 transition">
+                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-3">
+                            <div class="w-7 h-7 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs">3</div>
+                            <h4 class="font-bold text-slate-900 text-sm">Format (FORMAT)</h4>
+                        </div>
+                        <ul class="space-y-2 text-xs text-slate-600">
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Daftar Poin (List)</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Struktur Dokumen PDF</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Kode HTML / CSS</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Blok Kode (Code Block)</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Tabel Data</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Format Markdown</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Lembar Kerja (Spreadsheet)</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Diagram Gantt</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>File Teks Polos</li>
+                            <li class="flex items-center"><i class="fa-solid fa-check text-brand-600 mr-2 text-[10px]"></i>Slide Presentasi</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interactive Quick Prompt Copy -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                    <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center">
+                        <i class="fa-solid fa-terminal text-brand-600 mr-2"></i>Contoh Prompt Siap Pakai
+                    </h4>
+                    <div class="bg-slate-900 text-slate-100 rounded-xl p-4 font-mono text-xs relative group">
+                        <p id="prompt-cs1">"Bertindaklah sebagai Copywriter berpengalaman. Buatkan naskah penjualan (Sales Copy) untuk produk suplemen kesehatan dalam format Tabel dengan kolom Headline, Sub-headline, dan Call to Action."</p>
+                        <button onclick="copyText('prompt-cs1')" class="mt-3 inline-flex items-center space-x-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Salin Prompt</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cat-frameworks" class="category-content space-y-6">
+                <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                    <span class="inline-block px-3 py-1 bg-brand-500/20 text-brand-100 border border-brand-500/30 rounded-full text-xs font-medium mb-3">Modul 02</span>
+                    <h2 class="text-2xl font-extrabold text-white mb-2">Framework Prompting</h2>
+                    <p class="text-brand-100 text-sm leading-relaxed">5 Kerangka kerja terstruktur (R-T-F, T-A-G, B-A-B, C-A-R-E, R-I-S-E) untuk hasil yang presisi tinggi.</p>
+                </div>
+
+                <!-- Framework 1: RTF -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold">R-T-F</span>
+                        <span class="text-xs text-slate-500 font-medium">Role • Task • Format</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs py-2 bg-slate-50 rounded-xl font-medium text-slate-700">
+                        <div class="p-1 border-r border-slate-200"><span class="block text-brand-600 font-bold">Role</span>Peran</div>
+                        <div class="p-1 border-r border-slate-200"><span class="block text-brand-600 font-bold">Task</span>Tugas</div>
+                        <div class="p-1"><span class="block text-brand-600 font-bold">Format</span>Format</div>
+                    </div>
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-rtf">"Bertindaklah sebagai Pemasar Iklan Facebook (ROLE). Rancang kampanye iklan Facebook yang menarik untuk mempromosikan lini pakaian kebugaran baru untuk merek olahraga (TASK). Buat storyboard yang menggarisbawahi urutan materi kreatif iklan, termasuk teks iklan, visual, dan strategi penargetan (FORMAT)."</p>
+                        <button onclick="copyText('prompt-rtf')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Framework 2: TAG -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <span class="px-3 py-1 bg-brand-100 text-brand-800 rounded-lg text-xs font-bold">T-A-G</span>
+                        <span class="text-xs text-slate-500 font-medium">Task • Action • Goal</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs py-2 bg-slate-50 rounded-xl font-medium text-slate-700">
+                        <div class="p-1 border-r border-slate-200"><span class="block text-brand-600 font-bold">Task</span>Tugas</div>
+                        <div class="p-1 border-r border-slate-200"><span class="block text-brand-600 font-bold">Action</span>Tindakan</div>
+                        <div class="p-1"><span class="block text-brand-600 font-bold">Goal</span>Tujuan</div>
+                    </div>
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-tag">"Tugasnya adalah mengevaluasi kinerja anggota tim (TASK). Bertindaklah sebagai manajer langsung dan nilai kekuatan serta kelemahan anggota tim (ACTION). Tujuannya adalah meningkatkan kinerja tim sehingga skor kepuasan rata-rata pengguna naik dari 6 ke 7,5 di kuartal berikutnya (GOAL)."</p>
+                        <button onclick="copyText('prompt-tag')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Framework 3: BAB -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <span class="px-3 py-1 bg-teal-100 text-teal-800 rounded-lg text-xs font-bold">B-A-B</span>
+                        <span class="text-xs text-slate-500 font-medium">Before • After • Bridge</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs py-2 bg-slate-50 rounded-xl font-medium text-slate-700">
+                        <div class="p-1 border-r border-slate-200"><span class="block text-brand-600 font-bold">Before</span>Sebelum</div>
+                        <div class="p-1 border-r border-slate-200"><span class="block text-brand-600 font-bold">After</span>Sesudah</div>
+                        <div class="p-1"><span class="block text-brand-600 font-bold">Bridge</span>Jembatan</div>
+                    </div>
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-bab">"Peringkat SEO kita saat ini tidak terlihat di mana pun (BEFORE). Kita ingin berada di 10 besar peringkat SEO di ceruk pasar kita dalam waktu 90 hari (AFTER). Kembangkan rencana terperinci untuk menyebutkan semua langkah yang harus kita ambil, termasuk daftar 20 kata kunci teratas (BRIDGE)."</p>
+                        <button onclick="copyText('prompt-bab')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Framework 4: CARE -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold">C-A-R-E</span>
+                        <span class="text-xs text-slate-500 font-medium">Context • Action • Result • Example</span>
+                    </div>
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-care">"Kita sedang meluncurkan lini pakaian berkelanjutan yang baru (CONTEXT). Bisakah kamu membantu membuat kampanye periklanan target yang menekankan komitmen lingkungan kita? (ACTION). Hasil yang diinginkan adalah meningkatkan kesadaran produk dan penjualan (RESULT). Contoh bagus dari inisiatif serupa yang berhasil adalah kampanye Patagonia 'Don't Buy This Jacket' (EXAMPLE)."</p>
+                        <button onclick="copyText('prompt-care')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Framework 5: RISE -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <span class="px-3 py-1 bg-brand-100 text-brand-800 rounded-lg text-xs font-bold">R-I-S-E</span>
+                        <span class="text-xs text-slate-500 font-medium">Role • Input • Steps • Expectation</span>
+                    </div>
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-rise">"Bayangkan kamu adalah seorang ahli strategi konten (ROLE). Saya telah mengumpulkan informasi terperinci tentang audiens sasaran kita (INPUT). Berikan rencana strategi konten langkah demi langkah, identifikasi topik utama, buat kalender editorial (STEPS). Tujuannya adalah meningkatkan pengunjung bulanan blog sebesar 40% (EXPECTATION)."</p>
+                        <button onclick="copyText('prompt-rise')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cat-formula" class="category-content space-y-6">
+                <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                    <span class="inline-block px-3 py-1 bg-brand-500/20 text-brand-100 border border-brand-500/30 rounded-full text-xs font-medium mb-3">Modul 03</span>
+                    <h2 class="text-2xl font-extrabold text-white mb-2">Formula Prompt 6 Langkah</h2>
+                    <p class="text-brand-100 text-sm leading-relaxed">Hierarki pentingnya setiap komponen prompt dari yang paling Krusial hingga Tambahan.</p>
+                </div>
+
+                <!-- Visual Hierarchy Pyramid Graphic -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center">
+                        <i class="fa-solid fa-layer-group text-brand-600 mr-2"></i>Tingkat Kepentingan Elemen Prompt
+                    </h3>
+                    
+                    <!-- Funnel graphic -->
+                    <div class="space-y-2">
+                        <div class="w-full bg-emerald-600 text-white p-3 rounded-xl flex justify-between items-center text-xs font-bold shadow-sm">
+                            <span>1. [TASK] Tugas Utama</span>
+                            <span class="text-[10px] bg-emerald-700 px-2 py-0.5 rounded">Paling Penting ★★★★★</span>
+                        </div>
+                        <div class="w-[93%] mx-auto bg-emerald-500 text-white p-2.5 rounded-xl flex justify-between items-center text-xs font-semibold shadow-sm">
+                            <span>2. [CONTEXT] Konteks Latar Belakang</span>
+                            <span class="text-[10px] bg-emerald-600 px-2 py-0.5 rounded">Sangat Penting ★★★★☆</span>
+                        </div>
+                        <div class="w-[86%] mx-auto bg-brand-600 text-white p-2.5 rounded-xl flex justify-between items-center text-xs font-medium shadow-sm">
+                            <span>3. [EXAMPLES] Contoh Acuan</span>
+                            <span class="text-[10px] bg-brand-700 px-2 py-0.5 rounded">Penting ★★★☆☆</span>
+                        </div>
+                        <div class="w-[79%] mx-auto bg-brand-500 text-white p-2 rounded-xl flex justify-between items-center text-xs shadow-sm">
+                            <span>4. [PERSONA] Peran Ahli</span>
+                            <span class="text-[10px] bg-brand-600 px-2 py-0.5 rounded">Pendukung ★★☆☆☆</span>
+                        </div>
+                        <div class="w-[72%] mx-auto bg-teal-600 text-white p-2 rounded-xl flex justify-between items-center text-xs shadow-sm">
+                            <span>5. [FORMAT] Tata Letak / Struktur</span>
+                            <span class="text-[10px] bg-teal-700 px-2 py-0.5 rounded">Pendukung ★★☆☆☆</span>
+                        </div>
+                        <div class="w-[65%] mx-auto bg-slate-700 text-white p-2 rounded-xl flex justify-between items-center text-xs shadow-sm">
+                            <span>6. [TONE] Nada Bicara / Gaya</span>
+                            <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded">Tambahan ★☆☆☆☆</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complete Formula Example Box -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-puzzle-piece text-brand-600 mr-2"></i>Struktur Prompt Sempurna (Studi Kasus)
+                    </h3>
+                    
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl">
+                            <span class="font-bold text-emerald-800">[PERSONA]:</span>
+                            <p class="text-slate-700 mt-0.5">"Anda adalah seorang individu yang telah menerapkan gaya hidup lebih sehat selama setahun terakhir, menghasilkan kesejahteraan fisik dan mental yang lebih baik."</p>
+                        </div>
+                        <div class="p-3 bg-brand-50 border-l-4 border-brand-500 rounded-r-xl">
+                            <span class="font-bold text-brand-800">[KONTEKS]:</span>
+                            <p class="text-slate-700 mt-0.5">"Terinspirasi oleh perjalanan Anda, beberapa teman meminta saran untuk memulai perjalanan kesehatan mereka sendiri."</p>
+                        </div>
+                        <div class="p-3 bg-teal-50 border-l-4 border-teal-500 rounded-r-xl">
+                            <span class="font-bold text-teal-800">[TUGAS]:</span>
+                            <p class="text-slate-700 mt-0.5">"Tulis pesan untuk dibagikan di grup obrolan dengan teman-teman yang tertarik. Pesan harus menggarisbawahi langkah yang Anda ambil, membagikan tantangan dan solusi."</p>
+                        </div>
+                        <div class="p-3 bg-slate-100 border-l-4 border-slate-500 rounded-r-xl">
+                            <span class="font-bold text-slate-800">[NADA]:</span>
+                            <p class="text-slate-700 mt-0.5">"Gunakan bahasa yang motivatif dan empatik."</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono space-y-2 mt-2">
+                        <p id="prompt-full6">"Anda adalah individu yang sukses menjalani gaya hidup sehat selama 1 tahun terakhir. Terinspirasi dari ini, teman-teman Anda meminta saran. Tulis pesan grup chat yang menguraikan langkah konkret Anda, tantangan yang dihadapi, serta tawaran bantuan. Gunakan nada bicara yang motivatif dan empatik."</p>
+                        <button onclick="copyText('prompt-full6')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt Lengkap
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cat-deepdive" class="category-content space-y-6">
+                <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                    <span class="inline-block px-3 py-1 bg-brand-500/20 text-brand-100 border border-brand-500/30 rounded-full text-xs font-medium mb-3">Modul 04</span>
+                    <h2 class="text-2xl font-extrabold text-white mb-2">Panduan Elemen Prompt</h2>
+                    <p class="text-brand-100 text-sm leading-relaxed">Penjelasan mendalam 6 elemen kunci beserta contoh penerapannya secara mendetail.</p>
+                </div>
+
+                <!-- Deep Dive 1: TASK -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm">1</span>
+                        <h3 class="text-base font-bold text-slate-900">[TASK] Tugas Utama</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Gunakan kata kerja aksi di awal instruksi. Kata kerja memberikan perintah tegas agar ChatGPT mengerti persis apa yang harus dieksekusi.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+                            <span class="font-bold text-slate-800 block mb-1">Tugas Sederhana:</span>
+                            <p class="font-mono text-brand-700">"<span class="underline font-bold">Buatkan</span> program diet tiga bulan."</p>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+                            <span class="font-bold text-slate-800 block mb-1">Tugas Kompleks:</span>
+                            <p class="font-mono text-brand-700">"<span class="underline font-bold">Analisis</span> masukan pengguna, <span class="underline font-bold">ringkas</span> 3 poin utama, dan <span class="underline font-bold">kategorikan</span> sisanya."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deep Dive 2: CONTEXT -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-sm">2</span>
+                        <h3 class="text-base font-bold text-slate-900">[CONTEXT] Konteks Latar Belakang</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Konteks adalah panggung utama prompt. Jawab 3 pertanyaan kunci ini untuk memberi konteks lengkap:</p>
+                    <div class="bg-brand-50 p-3 rounded-xl text-xs space-y-1.5 text-brand-900 font-medium">
+                        <p><i class="fa-solid fa-circle-question text-brand-600 mr-2"></i>1. Apa latar belakang pengguna? (Background)</p>
+                        <p><i class="fa-solid fa-circle-question text-brand-600 mr-2"></i>2. Seperti apa indikator kesuksesannya? (Success Definition)</p>
+                        <p><i class="fa-solid fa-circle-question text-brand-600 mr-2"></i>3. Dalam lingkungan apa mereka berada? (Environment)</p>
+                    </div>
+                </div>
+
+                <!-- Deep Dive 3: EXAMPLES -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-sm">3</span>
+                        <h3 class="text-base font-bold text-slate-900">[EXAMPLES] Contoh Acuan</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Memberikan contoh acuan (Few-Shot Prompting) terbukti secara drastis meningkatkan kualitas output dan menghindarkan ChatGPT dari jawaban yang terlalu generik.</p>
+                    <div class="bg-slate-900 text-slate-100 p-3 rounded-xl text-xs font-mono">
+                        "Kamu adalah manajer HR... Susun deskripsi pekerjaan ini menggunakan format contoh berikut: [tempel contoh teks di sini]."
+                    </div>
+                </div>
+
+                <!-- Deep Dive 4: PERSONA -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-sm">4</span>
+                        <h3 class="text-base font-bold text-slate-900">[PERSONA] Peran Ahli</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Berikan identitas spesifik atau bahkan tokoh terkenal untuk mengarahkan gaya berpikir ChatGPT.</p>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-2">
+                        <p class="font-mono text-slate-700">• "Anda adalah terapis fisik spesialis cedera olahraga..."</p>
+                        <p class="font-mono text-slate-700">• "Tulis ulang postingan blog ini dengan gaya bicara Eminem."</p>
+                    </div>
+                </div>
+
+                <!-- Deep Dive 5: FORMAT -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-sm">5</span>
+                        <h3 class="text-base font-bold text-slate-900">[FORMAT] Format Output</h3>
+                    </div>
+                    <p class="text-xs text-slate-600">ChatGPT sangat handal menghasilkan format seperti: <span class="font-semibold text-brand-700">Tabel, Poin-poin, Blok Kode, Markdown, Teks Email, atau Slide Presentasi</span>.</p>
+                </div>
+
+                <!-- Deep Dive 6: TONE -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-sm">6</span>
+                        <h3 class="text-base font-bold text-slate-900">[TONE] Nada Bicara</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">Kasual</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">Formal</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">Cerdas / Jenaka</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">Antusias</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">Empatik</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cat-bonus" class="category-content space-y-6">
+                <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                    <span class="inline-block px-3 py-1 bg-emerald-400 text-brand-900 rounded-full text-xs font-bold mb-3 uppercase tracking-wider">Materi Bonus Eksklusif</span>
+                    <h2 class="text-2xl font-extrabold text-white mb-2">Master AI Prompting 2.0</h2>
+                    <p class="text-brand-100 text-sm leading-relaxed">Teknik rahasia tingkat lanjut yang tidak ada di e-book dasar untuk memaksimalkan kecerdasan AI.</p>
+                </div>
+
+                <!-- Bonus 1: Chain of Thought -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">Teknik "Chain-of-Thought" (Berpikir Langkah-demi-Langkah)</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Paksa AI untuk menghitung atau berpikir secara logis sebelum memberikan jawaban akhir agar terhindar dari halusinasi data.</p>
+                    <div class="bg-slate-900 text-slate-100 p-3.5 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-cot">"Tolong pecahkan masalah strategi bisnis ini. Berpikirlah secara bertahap (step-by-step). Tuliskan penalaran dan analisis logika Anda untuk setiap langkah sebelum menyimpulkan jawaban akhir."</p>
+                        <button onclick="copyText('prompt-cot')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt CoT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bonus 2: Reverse Prompting -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">Teknik "Reverse Prompting" (Prompt Terbalik)</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Biarkan ChatGPT yang mewawancarai Anda terlebih dahulu sebelum ia membuatkan dokumen atau strategi untuk Anda.</p>
+                    <div class="bg-slate-900 text-slate-100 p-3.5 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-rev">"Saya ingin membuat strategi pemasaran produk digital. Sebelum Anda memberikan drafnya, ajukan 5 pertanyaan paling krusial kepada saya satu per satu untuk mengumpulkan konteks yang sempurna."</p>
+                        <button onclick="copyText('prompt-rev')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt Terbalik
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bonus 3: Self-Correction Prompting -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">Teknik Self-Correction (Kritik Diri Sendiri)</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Minta AI menilai dan memperbaiki draf tulisannya sendiri secara otomatis sebelum disajikan kepada Anda.</p>
+                    <div class="bg-slate-900 text-slate-100 p-3.5 rounded-xl text-xs font-mono space-y-2">
+                        <p id="prompt-self">"Setelah Anda menyusun draf artikel di atas, tinjau kembali dari sudut pandang seorang pembaca yang kritis. Identifikasi 3 kelemahan tulisan tersebut dan perbaiki drafnya menjadi versi terbaik."</p>
+                        <button onclick="copyText('prompt-self')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Prompt Kritik
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Prompt Generator Tool -->
+                <div class="bg-brand-50 border border-brand-200 rounded-2xl p-5 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-brand-700 text-lg"></i>
+                        <h3 class="text-base font-bold text-brand-900">Interactive Prompt Generator</h3>
+                    </div>
+                    <p class="text-xs text-slate-600">Gunakan generator mini ini untuk meracik prompt siap pakai dalam hitungan detik!</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Peran (Role):</label>
+                            <select id="gen-role" class="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-brand-600">
+                                <option value="Senior Copywriter">Senior Copywriter</option>
+                                <option value="Pemasar Digital Expert">Pemasar Digital Expert</option>
+                                <option value="Konsultan Bisnis">Konsultan Bisnis</option>
+                                <option value="Pengembang Perangkat Lunak">Pengembang Perangkat Lunak</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Tentukan Tugas (Task):</label>
+                            <input type="text" id="gen-task" placeholder="Contoh: Buat rencana konten media sosial 1 bulan" class="w-full text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-brand-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Format & Nada:</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <select id="gen-format" class="text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none">
+                                    <option value="Tabel">Tabel Data</option>
+                                    <option value="Daftar Poin">Daftar Poin</option>
+                                    <option value="Format Email">Format Email</option>
+                                    <option value="Markdown">Markdown</option>
+                                </select>
+                                <select id="gen-tone" class="text-xs p-2.5 bg-white border border-slate-300 rounded-xl focus:outline-none">
+                                    <option value="Persuasif dan Profesional">Persuasif & Profesional</option>
+                                    <option value="Santai dan Ramah">Santai & Ramah</option>
+                                    <option value="Tegas dan Edukatif">Tegas & Edukatif</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="generateCustomPrompt()" class="w-full py-2.5 bg-brand-700 hover:bg-brand-800 text-white rounded-xl text-xs font-bold transition shadow-md">
+                            Racik Prompt Sekarang
+                        </button>
+                    </div>
+
+                    <div id="gen-result-box" class="hidden bg-slate-900 text-slate-100 p-3.5 rounded-xl text-xs font-mono space-y-2">
+                        <p id="gen-result-text"></p>
+                        <button onclick="copyText('gen-result-text')" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-sans font-medium transition">
+                            <i class="fa-solid fa-copy mr-1"></i>Salin Hasil Prompt
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="mt-auto px-6 py-4 border-t border-slate-100 bg-white text-center">
+            <p class="text-[11px] font-medium text-slate-400 tracking-wider uppercase">
+                by maelandri - arxvranity
+            </p>
+        </footer>
+
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2 z-40">
+            <div class="flex justify-around items-center">
+                <!-- Nav Item 1 -->
+                <button onclick="switchCategory('cat-cheat-sheet', this)" class="nav-item active flex flex-col items-center py-1 px-2 text-slate-400 hover:text-brand-700 transition">
+                    <i class="fa-solid fa-table-cells-large text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-medium">Cheat Sheet</span>
+                </button>
+                <!-- Nav Item 2 -->
+                <button onclick="switchCategory('cat-frameworks', this)" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-brand-700 transition">
+                    <i class="fa-solid fa-diagram-project text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-medium">Framework</span>
+                </button>
+                <!-- Nav Item 3 -->
+                <button onclick="switchCategory('cat-formula', this)" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-brand-700 transition">
+                    <i class="fa-solid fa-filter text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-medium">Formula 6</span>
+                </button>
+                <!-- Nav Item 4 -->
+                <button onclick="switchCategory('cat-deepdive', this)" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-brand-700 transition">
+                    <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-medium">Elemen</span>
+                </button>
+                <!-- Nav Item 5 -->
+                <button onclick="switchCategory('cat-bonus', this)" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-brand-700 transition">
+                    <i class="fa-solid fa-wand-magic-sparkles text-lg mb-0.5"></i>
+                    <span class="text-[10px] font-medium">Bonus AI</span>
+                </button>
+            </div>
+        </nav>
+
+    </div>
+
+    <script>
+        // Switch between categories
+        function switchCategory(catId, btnElement) {
+            // Hide all category contents
+            const contents = document.querySelectorAll('.category-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Deactivate all nav buttons
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected category content
+            const targetContent = document.getElementById(catId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+
+            // Activate current nav item
+            if (btnElement) {
+                btnElement.classList.add('active');
+            }
+
+            // Scroll window to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Copy Text Functionality
+        function copyText(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            
+            // Temporary textarea element for execCommand copy fallback
+            const tempInput = document.createElement("textarea");
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Show Toast Notification
+            showToast("Prompt berhasil disalin ke clipboard!");
+        }
+
+        // Show Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = message;
+            
+            toast.style.transform = 'translateY(0)';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(-150%)';
+            }, 2500);
+        }
+
+        // Scroll To Top Helper
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Custom Prompt Generator
+        function generateCustomPrompt() {
+            const role = document.getElementById('gen-role').value;
+            const task = document.getElementById('gen-task').value || "Buat strategi konten komprehensif";
+            const format = document.getElementById('gen-format').value;
+            const tone = document.getElementById('gen-tone').value;
+
+            const promptResult = `Bertindaklah sebagai ${role}. Tugas Anda adalah: ${task}. Sajikan hasil akhirnya dalam bentuk ${format}. Gunakan nada bicara yang ${tone}.`;
+
+            const resultBox = document.getElementById('gen-result-box');
+            const resultText = document.getElementById('gen-result-text');
+
+            resultText.innerText = `"${promptResult}"`;
+            resultBox.classList.remove('hidden');
+            showToast("Prompt custom berhasil dibuat!");
+        }
+
+        // Search Filter
+        function searchContent() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const activeCategory = document.querySelector('.category-content.active');
+            if (!activeCategory) return;
+
+            const cards = activeCategory.querySelectorAll('.bg-white, .bg-brand-50');
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
